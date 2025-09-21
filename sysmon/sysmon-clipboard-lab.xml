@@ -1,0 +1,18 @@
+<!--
+LAB ONLY - Sysmon config snippet enabling clipboard visibility for training.
+SCHEMA: TODO: VERIFY (Sysmon version and event ID for clipboard changes may vary).
+Do not deploy outside controlled labs. Clipboard contents must never leave the host.
+-->
+<Sysmon schemaversion="TODO-VERIFY">
+  <HashAlgorithms>sha256</HashAlgorithms>
+  <EventFiltering>
+    <ProcessCreate onmatch="include">
+      <CommandLine condition="contains">powershell</CommandLine>
+      <CommandLine condition="contains">pwsh</CommandLine>
+    </ProcessCreate>
+    <ClipboardChange onmatch="include">
+      <Operation condition="is">Copy</Operation>
+      <Operation condition="is">Paste</Operation>
+    </ClipboardChange>
+  </EventFiltering>
+</Sysmon>

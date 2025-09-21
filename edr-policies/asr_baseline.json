@@ -1,0 +1,16 @@
+{
+  "LAB_ONLY": true,
+  "notes": "Attack Surface Reduction baseline - sample values only. Validate in your environment. TODO: VERIFY GUIDs.",
+  "Policies": [
+    {
+      "Name": "Block Office child processes",
+      "Id": "TODO-VERIFY",
+      "State": "Enabled"
+    },
+    {
+      "Name": "Block credential stealing from LSASS",
+      "Id": "TODO-VERIFY",
+      "State": "Enabled"
+    }
+  ]
+}

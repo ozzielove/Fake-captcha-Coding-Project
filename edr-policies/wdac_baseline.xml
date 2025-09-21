@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- LAB ONLY - WDAC baseline. TODO: VERIFY signing or hash scopes. -->
+<SiPolicy xmlns="urn:schemas-microsoft-com:sipolicy" Version="10.0.0.0">
+  <BasePolicyID>{00000000-0000-0000-0000-000000000000}</BasePolicyID>
+  <Settings>
+    <Setting Provider="PolicyInfo" Key="Information" Value="LAB ONLY WDAC (sample)" />
+  </Settings>
+</SiPolicy>

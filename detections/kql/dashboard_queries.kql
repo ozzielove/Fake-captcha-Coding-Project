@@ -1,0 +1,40 @@
+// LAB ONLY - Microsoft Defender for Endpoint + Microsoft Sentinel (KQL-first)
+// References: TODO: VERIFY
+
+// 1) Rare parent of PowerShell (browser -> PowerShell)
+DeviceProcessEvents
+| where Timestamp > ago(7d)
+| where FileName in~ ('powershell.exe','pwsh.exe')
+| where InitiatingProcessFileName in~ ('chrome.exe','msedge.exe')
+| project Timestamp, DeviceName, FileName, ProcessCommandLine, InitiatingProcessFileName, InitiatingProcessCommandLine, InitiatingProcessParentFileName, ReportId
+| order by Timestamp desc
+
+// 2) EncodedCommand usage (variants)
+DeviceProcessEvents
+| where Timestamp > ago(7d)
+| where FileName in~ ('powershell.exe','pwsh.exe')
+| where ProcessCommandLine has_any ('-EncodedCommand','-encodedcommand',' -enc ',' -e ')
+| project Timestamp, DeviceName, FileName, ProcessCommandLine, InitiatingProcessFileName, ReportId
+| order by Timestamp desc
+
+// 3) MTTA: time from PowerShell process start to first alert
+let ps = DeviceProcessEvents
+| where Timestamp > ago(7d)
+| where FileName in~ ('powershell.exe','pwsh.exe')
+| project DeviceId, ReportId, ProcessCreationTime=Timestamp, Pid=ProcessId, InitiatingProcessFileName, ProcessCommandLine;
+let alerts = SecurityAlert
+| where TimeGenerated > ago(7d)
+| project DeviceId=tostring(Entities[0].DeviceId), AlertTime=TimeGenerated, AlertName=AlertName, AlertSeverity=Severity, SystemAlertId=SystemAlertId;
+ps
+| join kind=inner alerts on DeviceId
+| summarize FirstAlertTime=min(AlertTime) by DeviceId, ReportId, ProcessCreationTime, InitiatingProcessFileName
+| extend MTTA_seconds = datetime_diff('second', FirstAlertTime, ProcessCreationTime)
+| where MTTA_seconds >= 0 and MTTA_seconds <= 300
+| project DeviceId, ReportId, ProcessCreationTime, FirstAlertTime, MTTA_seconds, InitiatingProcessFileName
+| order by MTTA_seconds asc
+
+// 4) Alert Evidence pivot (for dashboard wiring)
+AlertEvidence
+| where Timestamp > ago(7d)
+| project Timestamp, ServiceSource, EntityType, Entity, AdditionalFields
+| order by Timestamp desc

@@ -1,0 +1,8 @@
+{
+  "LAB_ONLY": true,
+  "BrowserAddProfileShortcuts": false,
+  "URLWhitelist": ["http://localhost:*", "https://localhost:*"],
+  "ClipboardAllowedForUrls": ["http://localhost:*", "https://localhost:*"],
+  "NativeClipboard": true,
+  "Notes": "Policy names or keys may differ by release. TODO: VERIFY against official templates."
+}
