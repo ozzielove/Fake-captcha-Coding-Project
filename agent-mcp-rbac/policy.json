@@ -1,0 +1,6 @@
+{
+  "sandbox_root": "./sandbox",
+  "allowed_tools": ["echo", "readfile"],
+  "deny_message": "403 DENY: Out-of-scope or unauthorized tool (LAB ONLY). Alerts logged to agent-mcp-rbac/alerts.log",
+  "notes": "TODO: VERIFY any additional scopes or keys"
+}

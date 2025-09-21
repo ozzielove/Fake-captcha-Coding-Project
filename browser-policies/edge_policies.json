@@ -1,0 +1,7 @@
+{
+  "LAB_ONLY": true,
+  "URLAllowlist": ["http://localhost:*", "https://localhost:*"],
+  "InternetExplorerIntegrationLevel": 0,
+  "ClipboardAllowedForUrls": ["http://localhost:*", "https://localhost:*"],
+  "Notes": "Microsoft Edge policy names may vary. TODO: VERIFY with official ADMX."
+}

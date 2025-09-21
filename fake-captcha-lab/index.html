@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>LAB ONLY: Fake CAPTCHA -> Clipboard (Benign)</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'; upgrade-insecure-requests">
+  <meta http-equiv="Permissions-Policy" content="clipboard-write=(self)">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root { color-scheme: light dark; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 2rem; }
+    .banner { padding: 0.75rem 1rem; border: 2px solid #c00; background: #fff3f3; color: #900; font-weight: 700; margin-bottom: 1rem; }
+    .card { border: 1px solid #ccc; border-radius: 8px; padding: 1.5rem; max-width: 720px; }
+    button { padding: 0.75rem 1rem; font-size: 1rem; cursor: pointer; border-radius: 6px; border: 1px solid #444; }
+    code { background: #f4f4f4; padding: 0.2rem 0.4rem; border-radius: 4px; }
+    .ok { color: green; font-weight: 600; }
+    .warn { color: #b36b00; font-weight: 600; }
+    .small { font-size: 0.9rem; color: #555; }
+    .seeds { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.9rem; white-space: pre-wrap; background: #f9f9f9; padding: 0.75rem; border-radius: 6px; border: 1px dashed #bbb; }
+  </style>
+</head>
+<body>
+  <div class="banner">LAB ONLY - benign payloads (for example Notepad or Calc). No malware, no exfiltration, no persistence, no privilege escalation. Guardrails ON.</div>
+  <div class="card">
+    <h1>Fake CAPTCHA (Demonstration)</h1>
+    <p>This page simulates a social flow: a user solves a CAPTCHA and clicks <em>Verify</em>. On click, a <strong>benign PowerShell</strong> one-liner is copied to the clipboard (for example <code>Start-Process notepad.exe</code>). This is a defensive, blue-team lab that studies detections for <strong>HTML smuggling</strong> and the <strong>rare parent of PowerShell</strong> pattern. Contents never leave your host.</p>
+    <p class="small"><strong>Clipboard note:</strong> Modern browsers require a user gesture and a secure context; <code>http://localhost</code> is treated as secure for testing (TODO: VERIFY across browsers). You may see a prompt requesting permission.</p>
+    <div style="margin: 1rem 0;">
+      <label><input type="checkbox" id="chk1"> I am not a robot (lab)</label>
+      <br />
+      <label><input type="checkbox" id="chk2"> Allow clipboard write (lab)</label>
+    </div>
+    <button id="btnCopy" aria-disabled="false">Verify (Copy benign payload)</button>
+    <p id="status" class="small"></p>
+    <details style="margin-top: 1rem;">
+      <summary>Show rotating benign seeds (for evaluation)</summary>
+      <div class="seeds" id="seedList"></div>
+    </details>
+    <p class="small warn">
+      Execution is controlled by environment variable <code>LAB_EXECUTE</code> (default <strong>ON</strong> in this lab). This page only copies text; it does not auto-execute anything.
+    </p>
+  </div>
+  <script src="./payloads.js"></script>
+  <script>
+    (function () {
+      const btn = document.getElementById('btnCopy');
+      const status = document.getElementById('status');
+      const chk1 = document.getElementById('chk1');
+      const chk2 = document.getElementById('chk2');
+      const seedList = document.getElementById('seedList');
+      try {
+        seedList.textContent = LAB_SEEDS.map((s, i) => String(i + 1).padStart(2, '0') + ': ' + s.description + ' :: ' + s.command).join('\n');
+      } catch (e) {
+        seedList.textContent = 'Failed to render seeds (TODO: VERIFY).';
+      }
+      btn.addEventListener('click', async () => {
+        status.textContent = '';
+        if (!chk1.checked || !chk2.checked) {
+          status.textContent = 'Please check both boxes first (lab gesture plus clipboard permission).';
+          return;
+        }
+        const seed = nextLabSeed();
+        try {
+          await navigator.clipboard.writeText(seed.command);
+          status.innerHTML = '<span class="ok">Copied benign payload to clipboard:</span> <code>' + seed.description + '</code>';
+        } catch (err) {
+          console.error(err);
+          status.textContent = 'Clipboard write failed (browser policy?): TODO: VERIFY.';
+        }
+      }, false);
+    })();
+  </script>
+</body>
+</html>

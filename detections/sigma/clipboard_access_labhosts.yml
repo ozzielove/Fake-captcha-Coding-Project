@@ -1,0 +1,21 @@
+title: Clipboard Access Visibility (Sysmon LAB ONLY)
+id: 0f55c6a2-8f55-4c50-9c21-7f6fbd6d0c21
+status: experimental
+description: Metadata-only rule to surface clipboard access events on lab hosts. Event schema or version TODO: VERIFY.
+author: lab-blue-team
+date: 2025/09/21
+references:
+  - TODO: VERIFY
+tags:
+  - attack.t1059.001
+logsource:
+  product: windows
+  service: sysmon
+detection:
+  selection:
+    EventID:
+      - 24
+  condition: selection
+falsepositives:
+  - Normal application clipboard usage.
+level: low

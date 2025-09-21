@@ -1,0 +1,26 @@
+title: Rare Parent of PowerShell - Browser Parent (LAB)
+id: 7b3f7a77-7a35-4e0e-9f27-3a9f0a7f6e3a
+status: experimental
+description: Detects powershell.exe launched with a rare parent such as chrome.exe or msedge.exe (HTML smuggling lab scenario).
+author: lab-blue-team
+date: 2025/09/21
+references:
+  - TODO: VERIFY
+tags:
+  - attack.t1059.001
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection_parent:
+    ParentImage|endswith:
+      - '\\chrome.exe'
+      - '\\msedge.exe'
+  selection_child:
+    Image|endswith:
+      - '\\powershell.exe'
+      - '\\pwsh.exe'
+  condition: selection_parent and selection_child
+falsepositives:
+  - Admin or automation launching PowerShell from browser helpers (rare).
+level: medium

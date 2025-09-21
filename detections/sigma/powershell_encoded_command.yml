@@ -1,0 +1,25 @@
+title: PowerShell EncodedCommand Usage (LAB)
+id: 1f1b5d5d-3f7e-4c16-9f26-64d73d5a0b8b
+status: experimental
+description: Detects use of PowerShell EncodedCommand (various casings and short forms) in CommandLine.
+author: lab-blue-team
+date: 2025/09/21
+references:
+  - TODO: VERIFY
+tags:
+  - attack.t1059.001
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    CommandLine|contains:
+      - "-EncodedCommand"
+      - "-encodedcommand"
+      - "-ENcodedCOMmand"
+      - " -enc "
+      - " -e "
+  condition: selection
+falsepositives:
+  - Scripts or admin tools that legitimately use EncodedCommand. Document exclusions.
+level: medium
